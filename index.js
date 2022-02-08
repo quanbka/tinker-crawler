@@ -1,16 +1,4 @@
-const knex = require('knex')({
-  client: 'mysql2',
-  connection: {
-    host : '192.168.1.172',
-    port : 3306,
-    user : 'root',
-    password : '123@123',
-    database : 'tinker_crawl'
-  },
-  pool: { min: 0, max: 7 }
-});
-
-
+const knex = require('./knex.js');
 
 const { readFile } = require('fs');
 
