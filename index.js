@@ -25,7 +25,8 @@ readFile('sitemap_product.xml', { encoding : 'utf8'},  (err, data) => {
 
 
   sitemapObj.urlset.url.forEach((item, i) => {
-      knex('products').insert({url: item.loc}).then()
+      console.log(i);
+      knex('products').insert({url: item.loc}).onConflict().ignore().then()
 
   });
 
