@@ -30,6 +30,7 @@ function parse(html) {
         .replace(' 27"', ' 15.6 Inch')
         .replace(' 14"', ' 14 Inch')
         .replace(' 23.8"', ' 23.8 Inch')
+        .replace(' G1/4"', ' G1/4')
         .replace(/	/g, ' ');
     var jsonLd = JSON.parse(jsonLdText);
 
@@ -50,7 +51,8 @@ function parse(html) {
             content: $('#tab1 div').first().html().replace(/hanoicomputercdn.com/g, 'tinker.vn'),
             search: '',
             slug: jsonLd.offers.url.replace('https://www.hanoicomputer.vn/', ''),
-            status: 'pending'
+            status: 'pending',
+            warranty: $('.ribbons div').last().text()
         },
         gallery: [],
         brand: {
