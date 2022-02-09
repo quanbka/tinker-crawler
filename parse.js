@@ -31,8 +31,8 @@ function parse(html) {
         .replace(' 14"', ' 14 Inch')
         .replace(' 23.8"', ' 23.8 Inch')
         .replace(/	/g, ' ');
-    console.log(jsonLdText);
     var jsonLd = JSON.parse(jsonLdText);
+
     var retval = {
         product: {
             code: jsonLd.sku,
@@ -40,7 +40,9 @@ function parse(html) {
             image_url: jsonLd.image,
             description: jsonLd.description,
             long_description: $('.product-summary-item-ul').html(),
-            price: $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, ''),
+            price: $('#product-info-price .giany').text() 
+                ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
+                : jsonLd.offers.price,
             sale_price: jsonLd.offers.price,
             name: jsonLd.name,
             sku: jsonLd.sku,
