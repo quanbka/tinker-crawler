@@ -30,9 +30,10 @@ function parse(html) {
         .replace(' 27"', ' 15.6 Inch')
         .replace(' 14"', ' 14 Inch')
         .replace(' 23.8"', ' 23.8 Inch')
+        .replace(' G1/4"', ' G1/4')
         .replace(/	/g, ' ');
-    console.log(jsonLdText);
     var jsonLd = JSON.parse(jsonLdText);
+
     var retval = {
         product: {
             code: jsonLd.sku,
@@ -40,7 +41,9 @@ function parse(html) {
             image_url: jsonLd.image,
             description: jsonLd.description,
             long_description: $('.product-summary-item-ul').html(),
-            price: $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, ''),
+            price: $('#product-info-price .giany').text() 
+                ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
+                : jsonLd.offers.price,
             sale_price: jsonLd.offers.price,
             name: jsonLd.name,
             sku: jsonLd.sku,
@@ -48,7 +51,8 @@ function parse(html) {
             content: $('#tab1 div').first().html().replace(/hanoicomputercdn.com/g, 'tinker.vn'),
             search: '',
             slug: jsonLd.offers.url.replace('https://www.hanoicomputer.vn/', ''),
-            status: 'pending'
+            status: 'pending',
+            warranty: $('.ribbons div').last().text()
         },
         gallery: [],
         brand: {
