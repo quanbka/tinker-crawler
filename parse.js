@@ -30,8 +30,10 @@ function parse(html) {
         .replace(' 27"', ' 15.6 Inch')
         .replace(' 14"', ' 14 Inch')
         .replace(' 23.8"', ' 23.8 Inch')
-        .replace(' G1/4"', ' G1/4')
-        .replace(/	/g, ' ');
+        .replace('G1/4"', 'G1/4')
+        .replace(' 2.36"', ' 2.36 Inch')
+        .replace(/	/g, ' ')
+        .replace(/"description": "(.*?)",/g, '"description": "",')
     var jsonLd = JSON.parse(jsonLdText);
 
     var retval = {
@@ -39,7 +41,7 @@ function parse(html) {
             code: jsonLd.sku,
             title: jsonLd.name,
             image_url: jsonLd.image,
-            description: jsonLd.description,
+            description: $('meta[name="description"]').attr('content'),
             long_description: $('.product-summary-item-ul').html(),
             price: $('#product-info-price .giany').text() 
                 ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
