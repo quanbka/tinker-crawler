@@ -1,28 +1,40 @@
 const knex = require('./knex.js');
-const knex2 = require('./knex2.js');
+// const knex2 = require('./knex2.js');
 const cheerio = require('cheerio');
 const htmlMetadata = require('html-metadata');
 
 function fetch () {
     knex('products')
-        // .whereNull('product')
-        .where('id', 46)
+        .whereNull('product')
+        // .where('id', 46)
         .first()
         .then(function (result) {
+            console.log(result.url);
             let product = JSON.stringify(parse(result.html));
             knex('products')
                 .where('id', '=', result.id)
                 .update({product})
                 .then(function () {
                     console.log(`Done ${result.id}`);
-                    // fetch();
+                    fetch();
                 })
         });
 }
 
 function parse(html) {
     var $ = cheerio.load(html);
-    var jsonLd = JSON.parse($("script[type='application/ld+json']").html().replace(/\r?\n|\r/g, ''));
+    text = $("script[type='application/ld+json']")[0].children[0].data
+        .replace(/\n/g, ' ')
+        .replace(/\r/g, ' ')
+        .replace(/ +/g, " ")
+        .replace(' 15.6"', ' 15.6 Inch')
+        .replace(' 27"', ' 15.6 Inch')
+        .replace(' 14"', ' 14 Inch')
+        .replace(/	/g, ' ');
+    console.log(text);
+    jsonLd = JSON.parse(text);
+    // console.log(json);
+    // var jsonLd = JSON.parse($("script[type='application/ld+json']").html().replace(/\r?\n|\r/g, ''));
     var retval = {
         product: {
             code: jsonLd.sku,
