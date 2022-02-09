@@ -59,7 +59,6 @@ function parse(html) {
                 : jsonLd.offers.price,
             sale_price: jsonLd.offers.price,
             name: jsonLd.name,
-            sku: jsonLd.sku,
             manufacturer: jsonLd.brand.name,
             content: content,
             search: '',
