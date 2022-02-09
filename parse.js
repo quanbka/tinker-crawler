@@ -1,19 +1,18 @@
 const knex = require('./knex.js');
-// const knex2 = require('./knex2.js');
 const cheerio = require('cheerio');
-const htmlMetadata = require('html-metadata');
 
 function fetch () {
     knex('products')
         .whereNull('product')
-        // .where('id', 46)
         .first()
         .then(function (result) {
-            console.log(result.url);
-            let product = JSON.stringify(parse(result.html));
+            var product = JSON.stringify(parse(result.html));
             knex('products')
                 .where('id', '=', result.id)
-                .update({product})
+                .update({
+                    product: product,
+                    parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                })
                 .then(function () {
                     console.log(`Done ${result.id}`);
                     fetch();
@@ -23,18 +22,17 @@ function fetch () {
 
 function parse(html) {
     var $ = cheerio.load(html);
-    text = $("script[type='application/ld+json']")[0].children[0].data
+    var jsonLdText = $("script[type='application/ld+json']").html()
         .replace(/\n/g, ' ')
         .replace(/\r/g, ' ')
-        .replace(/ +/g, " ")
+        .replace(/ +/g, ' ')
         .replace(' 15.6"', ' 15.6 Inch')
         .replace(' 27"', ' 15.6 Inch')
         .replace(' 14"', ' 14 Inch')
+        .replace(' 23.8"', ' 23.8 Inch')
         .replace(/	/g, ' ');
-    console.log(text);
-    jsonLd = JSON.parse(text);
-    // console.log(json);
-    // var jsonLd = JSON.parse($("script[type='application/ld+json']").html().replace(/\r?\n|\r/g, ''));
+    console.log(jsonLdText);
+    var jsonLd = JSON.parse(jsonLdText);
     var retval = {
         product: {
             code: jsonLd.sku,
@@ -49,7 +47,6 @@ function parse(html) {
             manufacturer: jsonLd.brand.name,
             content: $('#tab1 div').first().html().replace(/hanoicomputercdn.com/g, 'tinker.vn'),
             search: '',
-            create_time: '',
             slug: jsonLd.offers.url.replace('https://www.hanoicomputer.vn/', ''),
             status: 'pending'
         },
@@ -59,6 +56,7 @@ function parse(html) {
             slug: jsonLd.brand.name.toLowerCase().replace(/\s+/g, '-'),
         }
     };
+
     var gallery = $('#img_thumb .img_thumb');
     gallery.each(function () {
         retval.gallery.push({
