@@ -25,6 +25,6 @@ readFile('laptop88.xml', { encoding : 'utf8'},  (err, data) => {
   // console.log(sitemapObj.urlset.url.length)
   sitemapObj.urlset.url.forEach((item, i) => {
       console.log(i);
-      knex('products').insert({url: item.loc}).onConflict().ignore().then()
+      knex('products').insert({url: item.loc, site: 2}).onConflict().ignore().then()
   });
 });
