@@ -3,18 +3,20 @@ const cheerio = require('cheerio');
 
 function fetch () {
     knex('products')
-        .whereNull('product')
+        .whereNull('parsed_at')
+        .where('site', 1)
         .first()
         .then(function (result) {
             var product = JSON.stringify(parse(result.html));
             knex('products')
                 .where('id', '=', result.id)
+                .where('site', 1)
                 .update({
                     product: product,
                     parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
                 })
                 .then(function () {
-                    console.log(`Done ${result.id}`);
+                    console.log(`Done Hanoicomputer ${result.id}`);
                     fetch();
                 })
         });
@@ -34,7 +36,16 @@ function parse(html) {
         .replace(' 2.36"', ' 2.36 Inch')
         .replace(/	/g, ' ')
         .replace(/"description": "(.*?)",/g, '"description": "",')
+        .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",');
     var jsonLd = JSON.parse(jsonLdText);
+
+    var content = $('#tab1 div').first().html();
+    if (content) {
+        content = content.replace(/hanoicomputercdn.com/g, 'tinker.vn')
+            .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '');
+    } else {
+        content = '';
+    }
 
     var retval = {
         product: {
@@ -50,7 +61,7 @@ function parse(html) {
             name: jsonLd.name,
             sku: jsonLd.sku,
             manufacturer: jsonLd.brand.name,
-            content: $('#tab1 div').first().html().replace(/hanoicomputercdn.com/g, 'tinker.vn'),
+            content: content,
             search: '',
             slug: jsonLd.offers.url.replace('https://www.hanoicomputer.vn/', ''),
             status: 'pending',
