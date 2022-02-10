@@ -37,6 +37,7 @@ function parse(html) {
         .replace('1/2.7"', '1/2.7')
         .replace(' 2.5"', ' 2.5 Inch')
         .replace(/	/g, ' ')
+        .replace('\\Cong', '/Cong')
         .replace(/"description": "(.*?)",/g, '"description": "",')
         .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",')
         .replace('khó lắm"', 'khó lắm');
