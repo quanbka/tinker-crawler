@@ -53,7 +53,7 @@ function parse(html) {
             code: jsonLd.sku,
             title: jsonLd.name,
             image_url: jsonLd.image,
-            description: $('meta[name="description"]').attr('content'),
+            description: $('meta[name="description"]').attr('content').replace(/HACOM/g, 'Tinker.vn'),
             long_description: $('.product-summary-item-ul').html(),
             price: $('#product-info-price .giany').text() 
                 ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
