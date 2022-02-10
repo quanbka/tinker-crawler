@@ -36,7 +36,8 @@ function parse(html) {
         .replace(' 2.36"', ' 2.36 Inch')
         .replace(/	/g, ' ')
         .replace(/"description": "(.*?)",/g, '"description": "",')
-        .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",');
+        .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",')
+        .replace('khó lắm"', 'khó lắm');
     var jsonLd = JSON.parse(jsonLdText);
 
     var content = $('#tab1 div').first().html();
