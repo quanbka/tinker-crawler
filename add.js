@@ -1,51 +1,48 @@
 const knex = require('./knex.js');
 const knex2 = require('./knex2.js');
 
-function add () {
-    knex('products')
+async function  addNext () {
+    console.log("addNext");
+    let productInfo = await knex('products')
         .whereNull('added_id')
         .whereNotNull('product')
-        .first()
-        .then(function (result) {
-            var crawlId = result.id;
-            var productData = result.product.product;
-            productData.create_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            knex2('chi_product').insert(productData).then(function (id) {
-                var galleryData = result.product.gallery;
-                galleryData.forEach((element, index) => {
-                    galleryData[index].product_id = id[0]
-                });
+        .first();
 
+    console.log(productInfo.url);
+    let product = productInfo.product;
+    console.log(product);
+    if (!isValidProduct(product)) {
+        console.log(productInfo.url + " NOT OK");
+        await knex('products').where('id', productInfo.id).update({added_id: 0})
 
-                knex2('chi_product_gallery').insert(galleryData).then(function (id) {
-                    var brandData = result.product.brand;
-                    knex2('chi_manufacture').where('slug', brandData.slug).first().then(function(response){
-                        if (!response) {
-                            knex2('chi_manufacture').insert(brandData).then(function (result){
-                                console.log('kien',crawlId);
-    
-                                knex('products').where('id', crawlId).update({
-                                    added_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                                    added_id: id[0]
-                                }).then(function (response) {
-                                    console.log(response);
-                                    add();
-                                })
-                            });
-                        } else {
-                            knex('products').where('id', crawlId).update({
-                                added_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                                added_id: id[0]
-                            }).then(function (response) {
-                                console.log(response);
-                                add();
-                            })
-                        }
-                    });
-                });
-
-                
-            })
-        });
+    } else {
+        console.log(productInfo.url + " OK");
+        await knex('products').where('id', productInfo.id).update({added_id: 1})
+        await add(product);
+    }
+    addNext();
 }
-add();
+
+function isValidProduct (product) {
+    if (!product.product.image_url) {
+        console.log("No image");
+        return false;
+    }
+    return true;
+}
+
+async function  add (product) {
+    console.log(product);
+    let code = product.product.code
+    console.log(code);
+    let row = await knex2('chi_product').where('code', code).first();
+    product.product.create_time = knex.fn.now()
+    if (!row) {
+        await knex2('chi_product').insert(product.product);
+    } else {
+        await knex2('chi_product').where('code', code).update(product.product);
+    }
+    console.log(row);
+}
+
+addNext();
