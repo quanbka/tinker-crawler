@@ -16,7 +16,7 @@ function fetch () {
                     parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
                 })
                 .then(function () {
-                    console.log(`Done ${result.id}`);
+                    console.log(`Done Laptop88 ${result.id}`);
                     fetch();
                 })
         });
@@ -41,7 +41,9 @@ function parse(html) {
             search: '',
             slug: $('meta[property="og:url"]').attr('content').replace('https://laptop88.vn/', '').replace('.html', ''),
             status: 'pending',
-            warranty: $('.pro-warranty p').first().html().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '')
+            warranty: $('.pro-warranty p').length 
+                ? $('.pro-warranty p').first().html().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '').replace('Laptop88', '')
+                : $('.pro-warranty').text().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '').replace('Laptop88', '')
         },
         gallery: [],
         brand: {}
