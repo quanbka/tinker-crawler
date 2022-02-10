@@ -34,6 +34,8 @@ function parse(html) {
         .replace(' 23.8"', ' 23.8 Inch')
         .replace('G1/4"', 'G1/4')
         .replace(' 2.36"', ' 2.36 Inch')
+        .replace('1/2.7"', '1/2.7')
+        .replace(' 2.5"', ' 2.5 Inch')
         .replace(/	/g, ' ')
         .replace(/"description": "(.*?)",/g, '"description": "",')
         .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",')
