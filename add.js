@@ -20,7 +20,7 @@ async function  addNext () {
         let id = await add(product);
         await knex('products').where('id', productInfo.id).update({added_id: id})
     }
-    // addNext();
+    await addNext();
 }
 
 function isValidProduct (product) {
@@ -35,7 +35,6 @@ async function  add (product) {
     let id = await addProduct(product);
     await addGallery(product, id);
     await addAttributes(product, id);
-    addNext();
     return id;
     console.log(id);
 
@@ -43,17 +42,18 @@ async function  add (product) {
 
 async function addProduct (product) {
     // console.log(product);
-    let slug = product.product.slug
+    let code = product.product.code
     // console.log(code);
-    let row = await knex2('chi_product').where('slug', slug).first();
+    let row = await knex2('chi_product').where('code', code).first();
     product.product.status = 'order';
     product.product.create_time = knex.fn.now()
+    product.product.attributes = JSON.stringify(product.attributes);
     if (!row) {
-        await knex2('chi_product').insert(product.product);
+        await knex2('chi_product').insert(product.product).onConflict().ignore();
     } else {
-        await knex2('chi_product').where('slug', slug).update(product.product);
+        await knex2('chi_product').where('code', code).update(product.product);
     }
-    row = await knex2('chi_product').where('slug', slug).first();
+    row = await knex2('chi_product').where('code', code).first();
     return row.id;
 }
 
