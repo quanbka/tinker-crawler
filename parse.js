@@ -48,7 +48,7 @@ function parse(html) {
         content = content
             // .replace(/hanoicomputercdn.com/g, 'tinker.vn')
             .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '')
-            .replace('/media/product/', 'https://hanoicomputercdn.com/media/product/');
+            .replace('/media/', 'https://hanoicomputercdn.com/media/');
     } else {
         content = '';
     }
@@ -77,7 +77,7 @@ function parse(html) {
             title: jsonLd.brand.name,
             slug: jsonLd.brand.name.toLowerCase().replace(/\s+/g, '-'),
         },
-        attributes: {}
+        attributes: []
     };
 
     var gallery = $('#img_thumb .img_thumb');
@@ -90,7 +90,16 @@ function parse(html) {
     var attributes = $('.bang-tskt:first').find($('tr'));
     if (attributes.length) {
         attributes.each(function (index) {
-            retval.attributes[$(this).find($('td')).first().text()] = $(this).find($('td')).last().text();
+            var attributeKey = $(this).find($('td')).first().text().replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+            var attributeValue = $(this).find($('td')).last().text().replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+            retval.attributes.push({
+                "attribute": {
+                    "name": attributeKey
+                },
+                "value": {
+                    "name": attributeValue
+                }
+            });
         });
     }
 

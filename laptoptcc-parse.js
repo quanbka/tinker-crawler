@@ -48,7 +48,7 @@ function parse(html) {
         },
         gallery: [],
         brand: {},
-        attributes: {}
+        attributes: []
     };
 
     var gallery = $('.thumb');
@@ -67,10 +67,19 @@ function parse(html) {
             attributeKey = null;
             attributeValue = null;
             attributeParts = $(this).text().split(':');
-            attributeKey = attributeParts[0];
-            attributeValue = attributeParts[1];
             if (attributeKey && attributeValue) {
-                retval.attributes[attributeKey] = attributeValue;
+                attributeKey = attributeParts[0].replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+                attributeValue = attributeParts[1].replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+            }
+            if (attributeKey && attributeValue) {
+                retval.attributes.push({
+                    "attribute": {
+                        "name": attributeKey
+                    },
+                    "value": {
+                        "name": attributeValue
+                    }
+                });
             }
         });
     }

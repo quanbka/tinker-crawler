@@ -47,7 +47,7 @@ function parse(html) {
         },
         gallery: [],
         brand: {},
-        attributes: {}
+        attributes: []
     };
 
     var gallery = $('#sync1 a');
@@ -60,7 +60,16 @@ function parse(html) {
     var attributes = $('.prodetail-spec-full:first').find($('tr'));
     if (attributes.length) {
         attributes.each(function (index) {
-            retval.attributes[$(this).find($('td')).first().text()] = $(this).find($('td')).last().text();
+            var attributeKey = $(this).find($('td')).first().text().replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+            var attributeValue = $(this).find($('td')).last().text().replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/ +/g, ' ');
+            retval.attributes.push({
+                "attribute": {
+                    "name": attributeKey
+                },
+                "value": {
+                    "name": attributeValue
+                }
+            });
         });
     }
 
