@@ -23,7 +23,7 @@ module.exports = {
       port : 3306,
       user : 'root',
       password : '123@123',
-      database : 'tinker-clone'
+      database : 'tinker'
     },
     pool: { min: 0, max: 7 }
   }
