@@ -36,14 +36,19 @@ function parse(html) {
             sale_price: $('span[class="price"] bdi').first().text().replace(/\./g, '').replace('đ', ''),
             name: $('.product_title').text(),
             content: $('.electro-description').html() 
-                ? $('.electro-description').html().replace(/LaptopTCC/g, 'Tinker.vn').replace(/Laptop TCC/g, 'Tinker.vn').replace(/laptoptcc.com/g, 'tinker.vn').replace(/LAPTOP TCC/g, 'tinker.vn')
+                ? $('.electro-description').html()
+                    .replace(/LaptopTCC/g, 'Tinker.vn')
+                    .replace(/Laptop TCC/g, 'Tinker.vn')
+                    // .replace(/laptoptcc.com/g, 'tinker.vn')
+                    .replace(/LAPTOP TCC/g, 'tinker.vn')
                 : '',
             search: '',
             slug: $('meta[property="og:url"]').attr('content').replace('https://laptoptcc.com/cua-hang/', '').replace('/', ''),
             status: 'pending',
         },
         gallery: [],
-        brand: {}
+        brand: {},
+        attributes: {}
     };
 
     var gallery = $('.thumb');
@@ -52,6 +57,23 @@ function parse(html) {
             image_url: $(this).attr('data-hq').includes('https://') ? 'https:' + $(this).attr('data-hq') : $(this).attr('data-hq')
         });
     });
+
+    var attributes = $('.specifications:first').find($('li'));
+    var attributeKey = null;
+    var attributeValue = null;
+    var attributeParts = null;
+    if (attributes.length) {
+        attributes.each(function (index) {
+            attributeKey = null;
+            attributeValue = null;
+            attributeParts = $(this).text().split(':');
+            attributeKey = attributeParts[0];
+            attributeValue = attributeParts[1];
+            if (attributeKey && attributeValue) {
+                retval.attributes[attributeKey] = attributeValue;
+            }
+        });
+    }
 
     return retval;
 }
