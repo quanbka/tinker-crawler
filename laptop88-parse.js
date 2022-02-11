@@ -16,7 +16,7 @@ function fetch () {
                     parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
                 })
                 .then(function () {
-                    console.log(`Done ${result.id}`);
+                    console.log(`Done Laptop88 ${result.id}`);
                     fetch();
                 })
         });
@@ -31,7 +31,7 @@ function parse(html) {
             title: $('.detail-top h1').first().text(),
             image_url: $('meta[property="og:image"]').attr('content'),
             description: $('meta[property="og:description"]').attr('content'),
-            long_description: $('.prodetail-spec-full ul').html(),
+            long_description: $('.prodetail-spec-full ul').length ? $('.prodetail-spec-full ul')[0].outerHTML : '',
             price: $('.unprice span').length
                 ? $('.unprice span').text().replace(/\./g,'').replace(/\Đ/g,'')
                 : $('.js-price-config').first().text().replace(/\./g,'').replace(/\Đ/g,''),
@@ -41,10 +41,13 @@ function parse(html) {
             search: '',
             slug: $('meta[property="og:url"]').attr('content').replace('https://laptop88.vn/', '').replace('.html', ''),
             status: 'pending',
-            warranty: $('.pro-warranty p').first().html().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '')
+            warranty: $('.pro-warranty p').length 
+                ? $('.pro-warranty p').first().html().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '').replace('Laptop88', '')
+                : $('.pro-warranty').text().replace(/<a href=(.*?)<\/a>/, '').replace('✅', '').replace('Laptop88', '')
         },
         gallery: [],
-        brand: {}
+        brand: {},
+        attributes: {}
     };
 
     var gallery = $('#sync1 a');
@@ -53,6 +56,13 @@ function parse(html) {
             image_url: 'https://laptop88.vn' + $(this).attr('href')
         });
     });
+
+    var attributes = $('.prodetail-spec-full:first').find($('tr'));
+    if (attributes.length) {
+        attributes.each(function (index) {
+            retval.attributes[$(this).find($('td')).first().text()] = $(this).find($('td')).last().text();
+        });
+    }
 
     return retval;
 }

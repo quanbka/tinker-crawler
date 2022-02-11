@@ -34,15 +34,21 @@ function parse(html) {
         .replace(' 23.8"', ' 23.8 Inch')
         .replace('G1/4"', 'G1/4')
         .replace(' 2.36"', ' 2.36 Inch')
+        .replace('1/2.7"', '1/2.7')
+        .replace(' 2.5"', ' 2.5 Inch')
         .replace(/	/g, ' ')
+        .replace('\\Cong', '/Cong')
         .replace(/"description": "(.*?)",/g, '"description": "",')
-        .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",');
+        .replace(/"reviewBody": "(.*?)",/, '"reviewBody": "",')
+        .replace('khó lắm"', 'khó lắm');
     var jsonLd = JSON.parse(jsonLdText);
 
     var content = $('#tab1 div').first().html();
     if (content) {
-        content = content.replace(/hanoicomputercdn.com/g, 'tinker.vn')
-            .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '');
+        content = content
+            // .replace(/hanoicomputercdn.com/g, 'tinker.vn')
+            .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '')
+            .replace('/media/product/', 'https://hanoicomputercdn.com/media/product/');
     } else {
         content = '';
     }
@@ -52,8 +58,8 @@ function parse(html) {
             code: jsonLd.sku,
             title: jsonLd.name,
             image_url: jsonLd.image,
-            description: $('meta[name="description"]').attr('content'),
-            long_description: $('.product-summary-item-ul').html(),
+            description: $('meta[name="description"]').attr('content').replace(/HACOM/g, 'Tinker.vn'),
+            long_description: $('.product-summary-item-ul').length ? $('.product-summary-item-ul')[0].outerHTML : '',
             price: $('#product-info-price .giany').text() 
                 ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
                 : jsonLd.offers.price,
@@ -70,7 +76,8 @@ function parse(html) {
         brand: {
             title: jsonLd.brand.name,
             slug: jsonLd.brand.name.toLowerCase().replace(/\s+/g, '-'),
-        }
+        },
+        attributes: {}
     };
 
     var gallery = $('#img_thumb .img_thumb');
@@ -79,6 +86,13 @@ function parse(html) {
             image_url: $(this).attr('data-href')
         });
     });
+
+    var attributes = $('.bang-tskt:first').find($('tr'));
+    if (attributes.length) {
+        attributes.each(function (index) {
+            retval.attributes[$(this).find($('td')).first().text()] = $(this).find($('td')).last().text();
+        });
+    }
 
     return retval;
 }
