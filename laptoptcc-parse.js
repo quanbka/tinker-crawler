@@ -35,11 +35,9 @@ function parse(html) {
             price: $('span[class="price"] bdi').first().text().replace(/\./g, '').replace('đ', ''),
             sale_price: $('span[class="price"] bdi').first().text().replace(/\./g, '').replace('đ', ''),
             name: $('.product_title').text(),
-            content: $('.electro-description').html()
-                .replace(/LaptopTCC/g, 'Tinker.vn')
-                .replace(/Laptop TCC/g, 'Tinker.vn')
-                .replace(/laptoptcc.com/g, 'tinker.vn')
-                .replace(/LAPTOP TCC/g, 'tinker.vn'),
+            content: $('.electro-description').html() 
+                ? $('.electro-description').html().replace(/LaptopTCC/g, 'Tinker.vn').replace(/Laptop TCC/g, 'Tinker.vn').replace(/laptoptcc.com/g, 'tinker.vn').replace(/LAPTOP TCC/g, 'tinker.vn')
+                : '',
             search: '',
             slug: $('meta[property="og:url"]').attr('content').replace('https://laptoptcc.com/cua-hang/', '').replace('/', ''),
             status: 'pending',
@@ -51,7 +49,7 @@ function parse(html) {
     var gallery = $('.thumb');
     gallery.each(function () {
         retval.gallery.push({
-            image_url: $(this).attr('data-hq')
+            image_url: $(this).attr('data-hq').includes('https://') ? 'https:' + $(this).attr('data-hq') : $(this).attr('data-hq')
         });
     });
 

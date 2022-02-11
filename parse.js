@@ -57,7 +57,7 @@ function parse(html) {
             title: jsonLd.name,
             image_url: jsonLd.image,
             description: $('meta[name="description"]').attr('content').replace(/HACOM/g, 'Tinker.vn'),
-            long_description: $('.product-summary-item-ul').html(),
+            long_description: $('.product-summary-item-ul').length ? $('.product-summary-item-ul')[0].outerHTML : '',
             price: $('#product-info-price .giany').text() 
                 ? $('#product-info-price .giany').text().replace(/\s+/g, '').replace('₫', '').replace(/\./g, '') 
                 : jsonLd.offers.price,
@@ -74,7 +74,8 @@ function parse(html) {
         brand: {
             title: jsonLd.brand.name,
             slug: jsonLd.brand.name.toLowerCase().replace(/\s+/g, '-'),
-        }
+        },
+        attributes: {}
     };
 
     var gallery = $('#img_thumb .img_thumb');
@@ -84,6 +85,13 @@ function parse(html) {
         });
     });
 
+    var attributes = $('.bang-tskt:first').find($('tr'));
+    if (attributes.length) {
+        attributes.each(function (index) {
+            retval.attributes[$(this).find($('p')).first().text()] = $(this).find($('p')).last().text();
+        });
+    }
+    
     return retval;
 }
 
