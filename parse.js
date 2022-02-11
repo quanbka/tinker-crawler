@@ -88,10 +88,10 @@ function parse(html) {
     var attributes = $('.bang-tskt:first').find($('tr'));
     if (attributes.length) {
         attributes.each(function (index) {
-            retval.attributes[$(this).find($('p')).first().text()] = $(this).find($('p')).last().text();
+            retval.attributes[$(this).find($('td')).first().text()] = $(this).find($('td')).last().text();
         });
     }
-    
+
     return retval;
 }
 
