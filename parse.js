@@ -13,7 +13,8 @@ function fetch () {
                 .where('site', 1)
                 .update({
                     product: product,
-                    parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                    parsed_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    added_id: null
                 })
                 .then(function () {
                     console.log(`Done Hanoicomputer ${result.id}`);
@@ -32,10 +33,15 @@ function parse(html) {
         .replace(' 27"', ' 15.6 Inch')
         .replace(' 14"', ' 14 Inch')
         .replace(' 23.8"', ' 23.8 Inch')
-        .replace('G1/4"', 'G1/4')
+        // .replace(' G1/4"', 'G1/4')
+        .replace('"video tdr failure amdkmdag.sys"', 'video tdr failure amdkmdag.sys')
         .replace(' 2.36"', ' 2.36 Inch')
         .replace('1/2.7"', '1/2.7')
         .replace(' 2.5"', ' 2.5 Inch')
+        .replace(' 24"', ' 24 Inch')
+        .replace(' 3.5"', ' 3.5 Inch')
+        .replace('", TFT', 'TFT')
+        .replace('"6 nút bấm có thể lập trình"', '6 nút bấm có thể lập trình')
         .replace(/	/g, ' ')
         .replace('\\Cong', '/Cong')
         .replace(/"description": "(.*?)",/g, '"description": "",')
@@ -48,7 +54,7 @@ function parse(html) {
         content = content
             // .replace(/hanoicomputercdn.com/g, 'tinker.vn')
             .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '')
-            .replace('/media/', 'https://hanoicomputercdn.com/media/');
+            .replace('"/media/', '"https://hanoicomputercdn.com/media/');
     } else {
         content = '';
     }
