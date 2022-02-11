@@ -45,8 +45,10 @@ function parse(html) {
 
     var content = $('#tab1 div').first().html();
     if (content) {
-        content = content.replace(/hanoicomputercdn.com/g, 'tinker.vn')
-            .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '');
+        content = content
+            // .replace(/hanoicomputercdn.com/g, 'tinker.vn')
+            .replace(/<h2 class="ddnb-title spct-title">(.*?)<\/h2>/, '')
+            .replace('/media/product/', 'https://hanoicomputercdn.com/media/product/');
     } else {
         content = '';
     }
